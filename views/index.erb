@@ -7,7 +7,56 @@
     <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
 </head>
 <body>
-  <h1>Webbserverprogrammering 1 - Projekt 3 - mall</h1>
-  <img src="/img/glhf.png">
+
+
+
+  <div id="wrapper">
+
+    <div id="new_div">
+
+      <form action="/views/new" method="post">
+        <label>Item <input type="text" name="item_name"></label>
+        <label>description <input type="text" name="item_description"></label>
+        <label>cateogry <input type="number" name="item_category"></label>
+        <label>price <input type="number" name="item_price"></label>
+        <input type="submit" value="Spara">
+        
+      </form>
+    </div>
+
+    <div id="item_list">
+      <ul>
+        <p>här kommer det finnas en lista</p>
+        <% @todo_items.each do |item| %>
+
+            <div id="item_list_item">
+
+              <div class="item_list_description">
+
+                <a href="/todo/<%= item['id']%>"><%= item['name'] %></a>
+                <p><%= item['description'] %></p>
+                <p><%= item['category'] %></p>
+                <p><%= item['price'] %></p>
+                <form action="/views/<%= item['id']%>/delete" method="post">
+                <label><input type="submit" value="delete"></label>
+
+              </div>
+
+
+              </form>
+          </div>
+
+        <% end %>
+      </ul>
+    </div>
+
+
+
+
+
+
+
+
+  </div>
 </body>
 </html>
