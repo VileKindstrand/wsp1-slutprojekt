@@ -1,3 +1,5 @@
+require 'bcrypt'
+
 class App < Sinatra::Base
 
     def db
@@ -34,6 +36,23 @@ class App < Sinatra::Base
         price = params["item_price"]
 
         db.execute("INSERT INTO item (name, description, category, price) VALUES(?,?,?,?)", [name, description, category, price])
+        redirect("/views")
+    end
+
+
+    get '/views/signin' do
+        erb(:"signin")
+    end
+
+    post '/views/signin' do
+
+        username = params["username"]
+        email = params["email"]
+        password = params["password"]
+        password_hashed = BCrypt::Password.create(password)
+        type = params["type"]
+
+        db.execute("INSERT INTO user (username, email, password, type) VALUES(?,?,?,?)", [username, email, password_hashed, type])
         redirect("/views")
     end
 

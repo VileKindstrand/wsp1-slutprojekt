@@ -11,6 +11,19 @@
 
 
     <div id="wrapper">
+
+
+      <header>
+
+        <a href="/views/signin">sign in</a>
+
+
+
+
+
+
+      </header>
+
         <div id="new_div">
 
         <form action="/views/new" method="post">
@@ -19,7 +32,7 @@
             <label>cateogry <input type="text" name="item_category"></label>
             <label>price <input type="number" name="item_price"></label>
             <input type="submit" value="Spara">
-            
+           
         </form>
         </div>
 
@@ -28,6 +41,8 @@
         <% @item_category.each do |item| %>
         <ul>
             <a href="/category/<%= item['category']%>"><%= item['category'] %></a>
+
+            
         </ul>
 
         <% end %>
@@ -54,7 +69,7 @@
   
   
                 </form>
-            </div>
+              </div>
   
           <% end %>
         </ul>
