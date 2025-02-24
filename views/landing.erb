@@ -24,12 +24,9 @@
         </div>
 
         <div>
-        <h3>kategorilista</h3>
         <% @item_category.each do |item| %>
-        <ul>
-            <a href="/category/<%= item['category']%>"><%= item['category'] %></a>
-        </ul>
-
+        <a href=""><%= item['category'] %></a>
+        <p><%= item['category'] %></p>
         <% end %>
         </div>
 

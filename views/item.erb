@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekt #2</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+</head>
+<body>
+
+
+
+<div id="item_list">
+<ul>
+  <p>här kommer det finnas en lista</p>
+  <%= @item['name'] %>
+  <%= @item['description'] %>
+  <%= @item['price'] %>
+  <%= @item['category'] %>
+
+</ul>
+</div>
+</body>
+</html>
