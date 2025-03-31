@@ -16,7 +16,7 @@
       <header>
         <a href="views\signin">sign up</a>
         <a href="views\login">log in</a>
-        <p>hej, <%= @user['username'] %>! du är en <%= @user['type'] %></p>
+        <p>hej, <%= @user['username'] %>! du är en admiiin</p>
 
 
 
@@ -25,7 +25,7 @@
 
       </header>
 
-        <!-- <div id="new_div">
+        <div id="new_div">
 
         <form action="/views/new" method="post">
             <label>Item <input type="text" name="item_name"></label>
@@ -35,7 +35,7 @@
             <input type="submit" value="Spara">
            
         </form>
-        </div> -->
+        </div>
 
         <div>
         <h3>kategorilista</h3>
@@ -63,9 +63,8 @@
                   <p><%= item['description'] %></p>
                   <p><%= item['category'] %></p>
                   <p><%= item['price'] %></p>
-                  <!-- <form action="/views/<%= item['id']%>/delete" method="post">
-                  <label><input type="submit" value="delete"></label> -->
-
+                  <form action="/views/<%= item['id']%>/delete" method="post">
+                  <label><input type="submit" value="delete"></label>
   
                 </div>
   

@@ -11,15 +11,32 @@ class App < Sinatra::Base
         return @db
     end
 
+    configure do
+        enable :sessions
+        set :session_secret, SecureRandom.hex(64)
+        end
+
     get '/' do
         redirect("/views")
+    end
+
+    get '/admin' do
+        @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
+        @item_category = db.execute('SELECT DISTINCT category FROM item')
+        
+        @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
+        p session[:user_id]
+
+        erb(:"admin/index")
     end
 
     get '/views' do
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
         
-        @username = db.execute('SELECT * FROM user WHERE username=?', session[:user_id])
+        @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
+        p session[:user_id]
+
         erb(:"index")
     end
 
@@ -56,20 +73,32 @@ class App < Sinatra::Base
         request_plain_password = params[:password]
         user = db.execute("SELECT * FROM user 
                              WHERE username = ?", request_username).first
+
         db_id = user["id"].to_i
         db_type = user["type"].to_s
-        db_password_hashed = user["password"].to_s
 
+        db_password_hashed = user["password"].to_s
         bcrypt_db_password = BCrypt::Password.new(db_password_hashed)
 
         if bcrypt_db_password == request_plain_password
+
             session[:user_id] = db_id
             session[:user_type] = db_type  # Spara typ i sessionen
-            redirect '/views'
+
+
+            if session[:user_type] == "admin"
+                p "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                redirect '/admin'
+            else
+                redirect '/views'
+                p "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+            end
             
         else
+
             status 401
             redirect '/loginfailed'
+
         end
           
     end
@@ -108,15 +137,15 @@ class App < Sinatra::Base
     end
     
 
-    get '/views/landing' do
-        @item_category = db.execute('SELECT category FROM item')
-        erb(:"landing")
-    end
+    # get '/views/landing' do
+    #     @item_category = db.execute('SELECT category FROM item')
+    #     erb(:"landing")
+    # end
 
-    get '/views/:id/select' do
-        @item_items = db.execute('SELECT * FROM item WHERE category=?', id)
-        erb(:"landing")
-    end
+    # get '/views/:id/select' do
+    #     @item_items = db.execute('SELECT * FROM item WHERE category=?', id)
+    #     erb(:"landing")
+    # end
 
     
 
