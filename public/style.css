@@ -9,6 +9,12 @@ body {
   justify-content: center;
 }
 
+header {
+  background-color: floralwhite;
+  padding: 20px;
+
+}
+
 #wrapper {
   width: 80%;
   max-width: 800px;
@@ -87,3 +93,5 @@ a:hover {
 .item_list_description p {
   margin: 5px 0;
 }
+
+

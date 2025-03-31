@@ -18,6 +18,8 @@ class App < Sinatra::Base
     get '/views' do
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
+        
+        @username = db.execute('SELECT * FROM user WHERE username=?', session[:user_id])
         erb(:"index")
     end
 
@@ -44,12 +46,39 @@ class App < Sinatra::Base
         erb(:"signin")
     end
 
+    get '/views/login' do
+        erb(:"login")
+    end
+
+    post '/views/login' do
+
+        request_username = params[:username]
+        request_plain_password = params[:password]
+        user = db.execute("SELECT * FROM user 
+                             WHERE username = ?", request_username).first
+        db_id = user["id"].to_i
+        db_type = user["type"].to_s
+        db_password_hashed = user["password"].to_s
+
+        bcrypt_db_password = BCrypt::Password.new(db_password_hashed)
+
+        if bcrypt_db_password == request_plain_password
+            session[:user_id] = db_id
+            session[:user_type] = db_type  # Spara typ i sessionen
+            redirect '/views'
+            
+        else
+            status 401
+            redirect '/loginfailed'
+        end
+          
+    end
+
     post '/views/signin' do
 
         username = params["username"]
         email = params["email"]
-        password = params["password"]
-        password_hashed = BCrypt::Password.create(password)
+        password_hashed = BCrypt::Password.create(params["password"])
         type = params["type"]
 
         db.execute("INSERT INTO user (username, email, password, type) VALUES(?,?,?,?)", [username, email, password_hashed, type])
