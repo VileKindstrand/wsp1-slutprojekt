@@ -35,6 +35,12 @@ class App < Sinatra::Base
         @item_category = db.execute('SELECT DISTINCT category FROM item')
         
         @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
+        if @user.nil?
+            @user = db.execute('SELECT * FROM user WHERE id=?', [1]).first
+        else
+        end
+
+
         p session[:user_id]
 
         erb(:"index")
@@ -120,6 +126,8 @@ class App < Sinatra::Base
         redirect("/views")
     end
 
+
+
     get '/item/:id' do |id|
         #hämtar id och deletar i databas "item" där id matchar hämtade id
         @item = db.execute('SELECT * FROM item WHERE id=?', id).first
@@ -149,7 +157,21 @@ class App < Sinatra::Base
 
     
 
-    
+    get '/views/:id/edit' do | id |
+        @item = db.execute('SELECT * FROM item  WHERE id=?', id).first
+        erb(:"edit_item")
+    end
+
+    post '/views/:id/update' do | id |
+        name = params["item_name"]
+        description = params["item_description"]
+        price = params["item_price"]
+        category = params["item_category"]
+
+        db.execute("UPDATE item SET name = ?, description = ?, price = ?, category = ? WHERE id = ?", [name, description, price, category, id])
+
+        redirect "/admin"
+    end
 
     
     

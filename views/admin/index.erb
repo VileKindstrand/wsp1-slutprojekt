@@ -64,12 +64,18 @@
                   <p><%= item['category'] %></p>
                   <p><%= item['price'] %></p>
                   <form action="/views/<%= item['id']%>/delete" method="post">
-                  <label><input type="submit" value="delete"></label>
+                    <label><input type="submit" value="delete"></label>
+                  </form>
+
+                  <form action="/views/<%= item['id']%>/edit" method="get">
+                  <input type="submit" value="Redigera">
+                </form>
+                
   
                 </div>
   
   
-                </form>
+
               </div>
   
           <% end %>

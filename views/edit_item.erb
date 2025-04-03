@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekt #2</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+</head>
+<body>
+
+
+    <h2>JAG ÄR HÄR</h2>
+
+    <h2><%= @item['name'] %></h2>
+    <h2>m<%= @item['description'] %></h2>
+    <h2><%= @item['price'] %></h2>
+    <h2><%= @item['category'] %></h2>
+    
+    
+    
+    <form action="/views/ <%= @item['id'] %>/update" method="post">
+       <label>
+            Namn <input type="text" value= "<%=  @item['name'] %>" name="item_name">
+       </label>
+       <label>
+            Beskrivning <input type="text" value= "<%= @item['description'] %>" name="item_description">
+        </label>
+        <label>
+            pris <input type="text" value= "<%= @item['price'] %>" name="item_price">
+        </label>
+        <label>
+            categori <input type="text" value= "<%= @item['category'] %>" name="item_category">
+        </label>
+    
+       <input type="submit" value="Spara">
+    </form>
+</body>
+</html>
+
+
