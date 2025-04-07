@@ -11,6 +11,16 @@ class App < Sinatra::Base
         return @db
     end
 
+
+    def user_type_check (user_type, destination)
+        if user_type == "admin"
+            erb(:"#{destination}")
+        else
+            erb(:"index")
+        end
+    end
+
+
     configure do
         enable :sessions
         set :session_secret, SecureRandom.hex(64)
@@ -27,7 +37,9 @@ class App < Sinatra::Base
         @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
         p session[:user_id]
 
-        erb(:"admin/index")
+
+        user_type_check(session[:user_type], "admin/index")
+
     end
 
     get '/views' do
@@ -36,7 +48,7 @@ class App < Sinatra::Base
         
         @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
         if @user.nil?
-            @user = db.execute('SELECT * FROM user WHERE id=?', [1]).first
+            @user = db.execute('SELECT * FROM user WHERE id=?', [3]).first
         else
         end
 
