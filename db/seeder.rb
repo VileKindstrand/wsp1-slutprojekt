@@ -12,6 +12,7 @@ class Seeder
   def self.drop_table
     db.execute('DROP TABLE IF EXISTS item;')
     db.execute('DROP TABLE IF EXISTS user;')
+    db.execute('DROP TABLE IF EXISTS cart;')
   end
 
   def self.create_table
@@ -28,6 +29,11 @@ class Seeder
       email TEXT NOT NULL,
       password TEXT NOT NULL,
       type TEXT NOT NULL)')
+      
+    db.execute('CREATE TABLE IF NOT EXISTS cart (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id FLOAT,
+      item_id FLOAT)')
   end
 
   def self.populate
@@ -35,7 +41,7 @@ class Seeder
     db.execute('INSERT INTO item (name, description, category, price) VALUES ("grön borr", "grön och kan borra", "grön sak",  20)')
     db.execute('INSERT INTO item (name, description, category, price) VALUES ("buske", "grön och typ buskig", "grönska", 30)')
 
-    db.execute('INSERT INTO user (username, email, password, type) VALUES ("Far", "vile.kindstrand@gmail.com", "$2a$12$5YBxfWoZM0T77331FapkgudcIQeOiSh5/bDcLUohwEP76p7tfBHIq", "admin")')
+    db.execute('INSERT INTO user (username, email, password, type) VALUES ("Guest", "", "", "guest")')
 
   end
 

@@ -34,8 +34,10 @@ class App < Sinatra::Base
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
         
-        @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
+        # @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
         p session[:user_id]
+
+        
 
 
         user_type_check(session[:user_type], "admin/index")
@@ -45,13 +47,11 @@ class App < Sinatra::Base
     get '/views' do
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
-        
-        @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
-        if @user.nil?
-            @user = db.execute('SELECT * FROM user WHERE id=?', [3]).first
-        else
-        end
 
+        # @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
+        # if @user.nil?
+        #     @user = db.execute('SELECT * FROM user WHERE id=?', [1]).first
+        # end
 
         p session[:user_id]
 
@@ -76,6 +76,8 @@ class App < Sinatra::Base
         redirect("/views")
     end
 
+    
+
 
     get '/views/signin' do
         erb(:"signin")
@@ -83,6 +85,26 @@ class App < Sinatra::Base
 
     get '/views/login' do
         erb(:"login")
+    end
+
+    before '/admin/*' do
+
+
+        if session[:user_type] == "admin"
+            p "wow du är admin"
+        else
+            p "womp womp"
+            redirect '/views'
+        end
+
+    end
+
+    before do
+        @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
+        if @user.nil?
+            @user = db.execute('SELECT * FROM user WHERE id=?', [1]).first
+        end
+
     end
 
     post '/views/login' do
@@ -138,12 +160,30 @@ class App < Sinatra::Base
         redirect("/views")
     end
 
+    post '/views/:id/add' do |id|
+        #unless shit
+        item_id = id
+        user_id = session[:user_id]
+        p session[:user_id]
+
+        #hämtar id och deletar i databas "item" där id matchar hämtade id
+        db.execute("INSERT INTO cart (user_id, item_id) VALUES(?,?)", [user_id, item_id])
+        redirect("/views")
+    end
+
+    get '/cart' do
+        user_id = session[:user_id]
+        #hämtar id och deletar i databas "item" där id matchar hämtade id
+        @cart_items = db.execute('SELECT * FROM cart WHERE user_id=?', user_id).first
+        erb(:"cart")
+    end
+
 
 
     get '/item/:id' do |id|
         #hämtar id och deletar i databas "item" där id matchar hämtade id
         @item = db.execute('SELECT * FROM item WHERE id=?', id).first
-        erb(:"item")
+        erb(:"show")
     end
 
     get '/category/:category' do |category|
@@ -169,9 +209,10 @@ class App < Sinatra::Base
 
     
 
-    get '/views/:id/edit' do | id |
+    get '/admin/:id/edit' do | id |
         @item = db.execute('SELECT * FROM item  WHERE id=?', id).first
-        erb(:"edit_item")
+        p "DU ÄR INNE"
+        erb(:"admin/edit")
     end
 
     post '/views/:id/update' do | id |

@@ -18,6 +18,10 @@
         <a href="views\login">log in</a>
         <p>hej, <%= @user['username'] %>! du är en <%= @user['type'] %></p>
 
+        <a href="/cart">boink</a>
+
+
+
 
 
 
@@ -65,6 +69,10 @@
                   <p><%= item['price'] %></p>
                   <!-- <form action="/views/<%= item['id']%>/delete" method="post">
                   <label><input type="submit" value="delete"></label> -->
+
+                  <form action="/views/<%= item['id']%>/add" method="post">
+                    <label><input type="submit" value="add"></label>
+                  </form>
 
   
                 </div>
