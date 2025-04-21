@@ -11,20 +11,53 @@ class App < Sinatra::Base
         return @db
     end
 
-
-    def user_type_check (user_type, destination)
-        if user_type == "admin"
-            erb(:"#{destination}")
-        else
-            erb(:"index")
-        end
-    end
-
-
     configure do
         enable :sessions
         set :session_secret, SecureRandom.hex(64)
         end
+
+
+
+    helpers do
+        def current_user
+            db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first || 
+            db.execute('SELECT * FROM user WHERE id=?', [1]).first
+        end
+    end
+
+    helpers do
+        def owns_cart_item?(cart_id)
+          item = db.execute("SELECT * FROM cart WHERE id = ?", cart_id).first
+          item && item["user_id"] == current_user["id"]
+          p item && item["user_id"] == current_user["id"]
+
+          
+        end
+    end
+
+
+    before do
+        @user = current_user
+
+    end
+
+    before '/admin' do
+
+
+        if session[:user_type] == "admin"
+            p "wow du är admin"
+        else
+            p "womp womp"
+            redirect '/views'
+        end
+
+    end
+
+
+
+    ##############################################################################################################
+    ##############################################################################################################
+    ##############################################################################################################
 
     get '/' do
         redirect("/views")
@@ -36,11 +69,9 @@ class App < Sinatra::Base
         
         # @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
         p session[:user_id]
+        erb(:"admin/index")
 
-        
-
-
-        user_type_check(session[:user_type], "admin/index")
+        # user_type_check(session[:user_type], "admin/index")
 
     end
 
@@ -48,10 +79,6 @@ class App < Sinatra::Base
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
 
-        # @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
-        # if @user.nil?
-        #     @user = db.execute('SELECT * FROM user WHERE id=?', [1]).first
-        # end
 
         p session[:user_id]
 
@@ -65,7 +92,7 @@ class App < Sinatra::Base
     #     redirect("/views")
     # end
 
-    post '/views/new' do
+    post '/admin/new' do
 
         name = params["item_name"]
         description = params["item_description"]
@@ -73,7 +100,7 @@ class App < Sinatra::Base
         price = params["item_price"]
 
         db.execute("INSERT INTO item (name, description, category, price) VALUES(?,?,?,?)", [name, description, category, price])
-        redirect("/views")
+        redirect("/admin")
     end
 
     
@@ -85,26 +112,6 @@ class App < Sinatra::Base
 
     get '/views/login' do
         erb(:"login")
-    end
-
-    before '/admin/*' do
-
-
-        if session[:user_type] == "admin"
-            p "wow du är admin"
-        else
-            p "womp womp"
-            redirect '/views'
-        end
-
-    end
-
-    before do
-        @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
-        if @user.nil?
-            @user = db.execute('SELECT * FROM user WHERE id=?', [1]).first
-        end
-
     end
 
     post '/views/login' do
@@ -154,10 +161,10 @@ class App < Sinatra::Base
         redirect("/views")
     end
 
-    post '/views/:id/delete' do |id|
+    post '/admin/:id/delete' do |id|
         #hämtar id och deletar i databas "item" där id matchar hämtade id
         db.execute("DELETE FROM item WHERE id=?", id)
-        redirect("/views")
+        redirect("/admin")
     end
 
     post '/views/:id/add' do |id|
@@ -174,8 +181,25 @@ class App < Sinatra::Base
     get '/cart' do
         user_id = session[:user_id]
         #hämtar id och deletar i databas "item" där id matchar hämtade id
-        @cart_items = db.execute('SELECT * FROM cart WHERE user_id=?', user_id).first
+        @cart_items = db.execute("
+        SELECT cart.id AS cart_id, item.* 
+        FROM cart 
+        JOIN item ON cart.item_id = item.id 
+        WHERE cart.user_id = ?", user_id)
         erb(:"cart")
+    end
+
+    post '/cart/:cart_id/delete' do |cart_id|
+        # owner_id = db.execute("SELECT * FROM cart WHERE id=?", id)
+
+        if  owns_cart_item?(cart_id)
+            db.execute("DELETE FROM cart WHERE id = ?", cart_id)
+            redirect '/cart'
+
+        else
+            redirect '/views'
+
+        end
     end
 
 

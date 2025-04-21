@@ -12,15 +12,26 @@
 
   <div id="item_list">
 
-    <p> <%=@cart_items %> </p>
-    <ul>
-        <p>här kommer det finnas en lista</p>
-        <p>GAAAAAAAAAAAAAAAAAA</p>
+    <% @cart_items.each do |item| %>
 
 
-        
+  
+      <div id="item_list_item">
 
-    </ul>
+        <div class="item_list_description">
+
+          <p><%= item['name'] %></p>
+          <p><%= item['price'] %>kr</p>
+          <p><%= item['cart_id'] %></p>
+
+
+        </div>
+          <form action="/cart/<%= item['cart_id']%>/delete" method="post">
+          <label><input type="submit" value="delete"></label>
+      </div>
+    <% end %>
   </div>
+
+
 </body>
 </html>
