@@ -11,6 +11,8 @@
 
 
   <div id="item_list">
+    <h1>shopping cart</h1>
+    <a href="views">return to homepage</a>
 
     <% @cart_items.each do |item| %>
 
@@ -27,7 +29,7 @@
 
         </div>
           <form action="/cart/<%= item['cart_id']%>/delete" method="post">
-          <label><input type="submit" value="delete"></label>
+          <label><input type="submit" value="remove from cart"></label>
       </div>
     <% end %>
   </div>

@@ -18,7 +18,7 @@
         <a href="views\login">log in</a>
         <p>hej, <%= @user['username'] %>! du är en <%= @user['type'] %></p>
 
-        <a href="/cart">boink</a>
+        <a href="/cart">shopping cart</a>
 
 
 
@@ -71,7 +71,7 @@
                   <label><input type="submit" value="delete"></label> -->
 
                   <form action="/views/<%= item['id']%>/add" method="post">
-                    <label><input type="submit" value="add"></label>
+                    <label><input type="submit" value="add to cart"></label>
                   </form>
 
   

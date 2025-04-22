@@ -7,18 +7,28 @@
     <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
 </head>
 <body>
+  <ul>
+    <h1>item</h1>
+    <h3><a href="/">return to homepage</a></h3>
+  </ul>
 
-
+  
 
   <div id="item_list">
-    <ul>
-      <p>här kommer det finnas en lista</p>
-      <%= @item['name'] %>
-      <%= @item['description'] %>
-      <%= @item['price'] %>
-      <%= @item['category'] %>
 
-    </ul>
+    <div id = "item_list_item">
+      <ul>
+        <h3><%= @item['name'] %></h3>
+        <h4><%= @item['description'] %></h4>
+        <h5><%= @item['price'] %></h5>
+        <h6><%= @item['category'] %></h6>
+
+        
+        
+      </ul>
+
+
+    </div>
   </div>
 </body>
 </html>
