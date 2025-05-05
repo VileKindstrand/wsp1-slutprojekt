@@ -14,11 +14,11 @@
 
 
       <header>
-        <a href="views\signin">sign up</a>
-        <a href="views\login">log in</a>
+        <a href="user\signin">sign up</a>
+        <a href="user\login">log in</a>
         <p>hej, <%= @user['username'] %>! du är en <%= @user['type'] %></p>
 
-        <a href="/cart">shopping cart</a>
+        <a href="/cart/index">shopping cart</a>
 
 
 
@@ -45,7 +45,7 @@
         <h3>kategorilista</h3>
         <% @item_category.each do |item| %>
         <ul>
-            <a href="/category/<%= item['category']%>"><%= item['category'] %></a>
+            <a href="/shop/category/<%= item['category']%>"><%= item['category'] %></a>
 
             
         </ul>
@@ -63,7 +63,7 @@
   
                 <div class="item_list_description">
   
-                  <a href="/item/<%= item['id']%>"><%= item['name'] %></a>
+                  <a href="/items/<%= item['id']%>"><%= item['name'] %></a>
                   <p><%= item['description'] %></p>
                   <p><%= item['category'] %></p>
                   <p><%= item['price'] %></p>

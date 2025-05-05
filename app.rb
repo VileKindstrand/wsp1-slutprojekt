@@ -29,7 +29,6 @@ class App < Sinatra::Base
         def owns_cart_item?(cart_id)
           item = db.execute("SELECT * FROM cart WHERE id = ?", cart_id).first
           item && item["user_id"] == current_user["id"]
-          p item && item["user_id"] == current_user["id"]
 
           
         end
@@ -45,9 +44,8 @@ class App < Sinatra::Base
 
 
         if session[:user_type] == "admin"
-            p "wow du är admin"
+
         else
-            p "womp womp"
             redirect '/views'
         end
 
@@ -66,31 +64,17 @@ class App < Sinatra::Base
     get '/admin' do
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
-        
-        # @user = db.execute('SELECT * FROM user WHERE id=?', [session[:user_id]]).first
-        p session[:user_id]
+
         erb(:"admin/index")
-
-        # user_type_check(session[:user_type], "admin/index")
-
     end
 
     get '/views' do
         @item_items = db.execute('SELECT * FROM item ORDER BY price ASC')
         @item_category = db.execute('SELECT DISTINCT category FROM item')
 
-
-        p session[:user_id]
-
-        erb(:"index")
+        erb(:"shop/index")
     end
 
-
-
-    # get '/views/new' do
-    #     erb(:"/new")
-    #     redirect("/views")
-    # end
 
     post '/admin/new' do
 
@@ -106,12 +90,12 @@ class App < Sinatra::Base
     
 
 
-    get '/views/signin' do
-        erb(:"signin")
+    get '/user/signin' do
+        erb(:"user/signin")
     end
 
-    get '/views/login' do
-        erb(:"login")
+    get '/user/login' do
+        erb(:"user/login")
     end
 
     post '/views/login' do
@@ -130,15 +114,13 @@ class App < Sinatra::Base
         if bcrypt_db_password == request_plain_password
 
             session[:user_id] = db_id
-            session[:user_type] = db_type  # Spara typ i sessionen
+            session[:user_type] = db_type
 
 
             if session[:user_type] == "admin"
-                p "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                 redirect '/admin'
             else
                 redirect '/views'
-                p "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
             end
             
         else
@@ -162,23 +144,22 @@ class App < Sinatra::Base
     end
 
     post '/admin/:id/delete' do |id|
-        #hämtar id och deletar i databas "item" där id matchar hämtade id
+
         db.execute("DELETE FROM item WHERE id=?", id)
         redirect("/admin")
     end
 
     post '/views/:id/add' do |id|
-        #unless shit
+
         item_id = id
         user_id = session[:user_id]
-        p session[:user_id]
 
         #hämtar id och deletar i databas "item" där id matchar hämtade id
         db.execute("INSERT INTO cart (user_id, item_id) VALUES(?,?)", [user_id, item_id])
         redirect("/views")
     end
 
-    get '/cart' do
+    get '/cart/index' do
         user_id = session[:user_id]
         #hämtar id och deletar i databas "item" där id matchar hämtade id
         @cart_items = db.execute("
@@ -186,11 +167,10 @@ class App < Sinatra::Base
         FROM cart 
         JOIN item ON cart.item_id = item.id 
         WHERE cart.user_id = ?", user_id)
-        erb(:"cart")
+        erb(:"cart/index")
     end
 
     post '/cart/:cart_id/delete' do |cart_id|
-        # owner_id = db.execute("SELECT * FROM cart WHERE id=?", id)
 
         if  owns_cart_item?(cart_id)
             db.execute("DELETE FROM cart WHERE id = ?", cart_id)
@@ -204,38 +184,24 @@ class App < Sinatra::Base
 
 
 
-    get '/item/:id' do |id|
+    get '/items/:id' do |id|
         #hämtar id och deletar i databas "item" där id matchar hämtade id
         @item = db.execute('SELECT * FROM item WHERE id=?', id).first
-        erb(:"show")
+        erb(:"items/show")
     end
 
-    get '/category/:category' do |category|
+    get '/shop/category/:category' do |category|
         db.results_as_hash = true  # Se till att resultatet returneras som hash
         @items_by_category = db.execute('SELECT * FROM item WHERE category = ?', category)
     
         # Om inga objekt hittas, skicka en 404-sida
         halt 404, "Inga objekt hittades i denna kategori" if @items_by_category.empty?
     
-        erb :category_list  # Kopplar till vyn
+        erb(:"shop/category_list")  # Kopplar till vyn
     end
-    
-
-    # get '/views/landing' do
-    #     @item_category = db.execute('SELECT category FROM item')
-    #     erb(:"landing")
-    # end
-
-    # get '/views/:id/select' do
-    #     @item_items = db.execute('SELECT * FROM item WHERE category=?', id)
-    #     erb(:"landing")
-    # end
-
-    
 
     get '/admin/:id/edit' do | id |
         @item = db.execute('SELECT * FROM item  WHERE id=?', id).first
-        p "DU ÄR INNE"
         erb(:"admin/edit")
     end
 
@@ -249,10 +215,6 @@ class App < Sinatra::Base
 
         redirect "/admin"
     end
-
-    
-    
-    
 
 end
 
